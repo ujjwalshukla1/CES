@@ -24,3 +24,36 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Smooth floating animation */
+@keyframes floatSmooth {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0) rotate(2deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+}
+
+/* Base animation */
+.floating-hex {
+  animation: floatSmooth 6s ease-in-out infinite;
+  transform-origin: center;
+  backface-visibility: hidden;
+}
+
+/* Variants for natural motion */
+.floating-hex.slow {
+  animation-duration: 8s;
+}
+
+.floating-hex.fast {
+  animation-duration: 4s;
+}
+
+.floating-hex.delay {
+  animation-delay: 2s;
+}
