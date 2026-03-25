@@ -1,58 +1,74 @@
 import React from "react";
 import { Beaker, Network, Factory } from "lucide-react";
 import Link from "next/link";
+import type { ServicesSection, ServiceItem } from "@/lib/sanity/queries";
 
-type Service = {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
+const iconMap: Record<string, React.ReactNode> = {
+  beaker: <Beaker className="w-6 h-6" />,
+  network: <Network className="w-6 h-6" />,
+  factory: <Factory className="w-6 h-6" />,
 };
 
-const services: Service[] = [
+const fallbackServices: ServiceItem[] = [
   {
+    _key: "1",
     title: "Condensate Treatment",
     description:
       "Condensate treatment is a crucial aspect of industrial process, particularly in systems.",
-    icon: <Beaker className="w-6 h-6 " />,
+    icon: "beaker",
   },
   {
+    _key: "2",
     title: "Potable Water and Waste",
     description:
       "Potable water treatment processes remove impurities, contaminants, and pathogens.",
-    icon: <Network className="w-6 h-6 " />,
+    icon: "network",
   },
   {
+    _key: "3",
     title: "Cooling Water Treatment",
     description:
       "After treatment, potable water is distribute through well maintained systems of pipes.",
-    icon: <Factory className="w-6 h-6 " />,
+    icon: "factory",
   },
 ];
 
-function Service() {
+const fallback = {
+  label: "OUR SERVICES",
+  heading: "We Provide Reliable Services",
+  services: fallbackServices,
+};
+
+type ServiceProps = {
+  data?: ServicesSection | null;
+};
+
+function Service({ data }: ServiceProps) {
+  const d = data ?? fallback;
+  const services = d.services?.length ? d.services : fallbackServices;
   return (
     <section className="w-full bg-gray-50 py-16 px-4 sm:px-6 lg:px-12">
       {/* Header */}
       <div className="text-center mb-16 md:mb-30">
         <span className="text-xs font-semibold text-green-600 bg-green-100 px-3 py-1 rounded-full">
-          OUR SERVICES
+          {d.label || fallback.label}
         </span>
 
         <h2 className="mt-4 text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
-          We Provide Reliable Services
+          {d.heading || fallback.heading}
         </h2>
       </div>
 
       {/* Cards */}
       <div className="flex flex-col gap-10 md:grid md:grid-cols-3 md:gap-6">
-        {services.map((service, index) => (
+        {services.map((service: ServiceItem) => (
           <div
-            key={index}
+            key={service._key}
             className=" group relative bg-white rounded-2xl shadow-sm p-6 pt-10 transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-lg hover:bg-green-600"
           >
             {/* Icon */}
             <div className="absolute -top-6 left-6 w-12 h-12 bg-green-600 text-white rounded-xl flex items-center justify-center shadow-md transition-colors duration-300 group-hover:bg-white group-hover:text-green-600">
-              {service.icon}
+              {iconMap[service.icon] || <Beaker className="w-6 h-6" />}
             </div>
 
             {/* Content */}

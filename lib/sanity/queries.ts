@@ -99,3 +99,71 @@ export const footerQuery = `*[_type == "footer"][0]{
 export async function getFooter(): Promise<FooterData | null> {
   return sanityFetch<FooterData | null>(footerQuery);
 }
+
+// --- Page Builder ---
+
+export type AboutFeature = {
+  _key: string;
+  text: string;
+};
+
+export type AboutSection = {
+  _key: string;
+  _type: "aboutSection";
+  label?: string;
+  heading?: string;
+  description?: string;
+  features?: AboutFeature[];
+  ctaText?: string;
+  yearsExperience?: number;
+};
+
+export type ServiceItem = {
+  _key: string;
+  title: string;
+  description: string;
+  icon: string;
+  href?: string;
+};
+
+export type ServicesSection = {
+  _key: string;
+  _type: "servicesSection";
+  label?: string;
+  heading?: string;
+  services?: ServiceItem[];
+};
+
+export type Section = AboutSection | ServicesSection;
+
+export type PageData = {
+  title: string;
+  slug: { current: string };
+  sections?: Section[];
+};
+
+export const pageQuery = `*[_type == "page" && slug.current == $slug][0]{
+  title,
+  slug,
+  sections[]{
+    _key,
+    _type,
+    _type == "aboutSection" => {
+      label,
+      heading,
+      description,
+      features[]{ _key, text },
+      ctaText,
+      yearsExperience
+    },
+    _type == "servicesSection" => {
+      label,
+      heading,
+      services[]{ _key, title, description, icon, href }
+    }
+  }
+}`;
+
+export async function getPage(slug: string): Promise<PageData | null> {
+  return sanityFetch<PageData | null>(pageQuery, { slug });
+}

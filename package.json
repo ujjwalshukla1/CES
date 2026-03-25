@@ -12,6 +12,7 @@
     "@sanity/image-url": "^2.0.3",
     "esbuild": "^0.27.4",
     "jiti": "^2.6.1",
+    "lucide-react": "^1.6.0",
     "next": "16.2.1",
     "next-sanity": "^12.1.6",
     "react": "19.2.4",
