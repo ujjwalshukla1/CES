@@ -1,4 +1,5 @@
 import About from "@/components/section/About";
+import TestimonialSection from "@/components/section/Testimonial";
 import Image from "next/image";
 
   return (
