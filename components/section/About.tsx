@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import FloatingHex from "../ui/FloatingHex";
+import type { AboutSection } from "@/lib/sanity/queries";
 
 const css = `
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap');
@@ -83,7 +84,24 @@ const css = `
 }
 `;
 
-export default function About() {
+const fallback = {
+  label: "LABORATORY",
+  heading: "We Provide Reliable & High-Quality Service",
+  description: "Welcome to the chemistry research center, a hub of discovery.",
+  features: [
+    { _key: "1", text: "Customizable platform" },
+    { _key: "2", text: "Easy configuration" },
+  ],
+  ctaText: "Get in Touch",
+  yearsExperience: 20,
+};
+
+type AboutProps = {
+  data?: AboutSection | null;
+};
+
+export default function About({ data }: AboutProps) {
+  const d = data ?? fallback;
   const ref = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
   const [offsetY, setOffsetY] = useState(0);
@@ -135,7 +153,7 @@ export default function About() {
 
             <div className="float exp-card-wrap z-50">
               <div className="exp-card bg-white p-4 rounded-xl shadow text-center">
-                <p className="text-4xl font-bold text-green-600">20</p>
+                <p className="text-4xl font-bold text-green-600">{d.yearsExperience ?? fallback.yearsExperience}</p>
                 <p className="text-xs text-gray-500">Years Experience</p>
               </div>
             </div>
@@ -146,28 +164,29 @@ export default function About() {
             <span
               className={`anim-fade-up ${iv} sd-1 text-green-600 text-xs font-bold`}
             >
-              LABORATORY
+              {d.label || fallback.label}
             </span>
 
             <h2
               className={`anim-fade-up ${iv} sd-2 text-3xl font-bold mt-4 text-black`}
             >
-              We Provide Reliable & High-Quality Service
+              {d.heading || fallback.heading}
             </h2>
 
             <p className={`anim-fade-up ${iv} sd-3 text-gray-500 mt-4`}>
-              Welcome to the chemistry research center, a hub of discovery.
+              {d.description || fallback.description}
             </p>
 
             <ul className={`anim-fade-up ${iv} sd-4 mt-6 space-y-3 text-black`}>
-              <li>✔ Customizable platform</li>
-              <li>✔ Easy configuration</li>
+              {(d.features?.length ? d.features : fallback.features!).map((f: { _key: string; text: string }) => (
+                <li key={f._key}>✔ {f.text}</li>
+              ))}
             </ul>
 
             <button
               className={`anim-fade-up ${iv} sd-5 btn-cta mt-6 bg-green-600 text-white px-6 py-3 rounded-full`}
             >
-              Get in Touch
+              {d.ctaText || fallback.ctaText}
             </button>
           </div>
         </div>
