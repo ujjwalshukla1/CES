@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(node -p \"process.arch + '' '' + process.platform\")",
+      "Bash(\"/home/developer/Desktop/New Folder/Port/ces/node_modules/@esbuild/linux-x64/bin/esbuild\" --version)",
+      "Read(//usr/lib/**)",
+      "Bash(npx next:*)"
+    ]
+  }
+}

@@ -1,10 +1,13 @@
 import About from "@/components/section/About";
 import Image from "next/image";
 
-export default function Home() {
   return (
-    <>
-      <About />
-    </>
+    <div className="flex flex-col min-h-screen">
+      <Navbar links={navData?.links} />
+      <main className="flex-1 pt-24">
+        <h1>Home</h1>
+      </main>
+      <Footer data={footerData} />
+    </div>
   );
 }
