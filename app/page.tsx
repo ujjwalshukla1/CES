@@ -1,9 +1,5 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { getNavbar, getFooter } from "@/lib/sanity/queries";
-
-export default async function Home() {
-  const [navData, footerData] = await Promise.all([getNavbar(), getFooter()]);
+import About from "@/components/section/About";
+import Image from "next/image";
 
   return (
     <div className="flex flex-col min-h-screen">
