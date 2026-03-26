@@ -195,6 +195,7 @@ export type TestimonialItem = {
   description: string;
   points: string[];
   icon?: string;
+  image?: string;
 };
 
 export type TestimonialSection = {
@@ -205,7 +206,12 @@ export type TestimonialSection = {
   items?: TestimonialItem[];
 };
 
-export type Section = AboutSection | ServicesSection | HeroSection | ContactSection | TestimonialSection;
+export type Section =
+  | AboutSection
+  | ServicesSection
+  | HeroSection
+  | ContactSection
+  | TestimonialSection;
 
 export type PageData = {
   title: string;

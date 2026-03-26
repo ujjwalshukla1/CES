@@ -1,8 +1,9 @@
-// components/TestimonialSection.tsx
+"use client";
 
-// Testimonial Section
 import { CheckCircle } from "lucide-react";
 import type { TestimonialSection, TestimonialItem } from "@/lib/sanity/queries";
+
+// ─── Fallback Data ─────────────────────────────────────────
 
 const fallbackItems: TestimonialItem[] = [
   {
@@ -43,33 +44,36 @@ const fallbackItems: TestimonialItem[] = [
   },
 ];
 
+// ─── Card Component ────────────────────────────────────────
+
 const TestimonialCard = ({
   title,
   description,
   points,
   icon,
+  image,
 }: TestimonialItem) => {
+  console.log(icon);
   return (
     <div
       className="group relative bg-white rounded-2xl shadow-md border border-gray-100
-  p-5 sm:p-6 md:p-8
-  flex flex-col justify-between
-  transition-all duration-300 hover:shadow-lg"
+      p-5 sm:p-6 md:p-8
+      flex flex-col justify-between
+      transition-all duration-300 hover:shadow-lg"
     >
-      {/* Top Pills (Animated) */}
+      {/* Top Pills */}
       <div className="pointer-events-none absolute -top-3 sm:-top-4 left-4 sm:left-6 flex gap-2">
         <div
           className="w-5 h-5 sm:w-6 sm:h-6 bg-green-400 rounded-full 
-      opacity-0 translate-y-3 scale-75
-      group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100
-      transition-all duration-300 ease-out"
+          opacity-0 translate-y-3 scale-75
+          group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100
+          transition-all duration-300 ease-out"
         />
-
         <div
           className="w-8 h-5 sm:w-10 sm:h-6 bg-blue-900 rounded-full 
-      opacity-0 translate-y-3 scale-75
-      group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100
-      transition-all duration-300 ease-out delay-75"
+          opacity-0 translate-y-3 scale-75
+          group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100
+          transition-all duration-300 ease-out delay-75"
         />
       </div>
 
@@ -77,22 +81,29 @@ const TestimonialCard = ({
       <div className="flex justify-between items-start mb-3 sm:mb-4">
         <h3
           className="font-bold text-blue-900 max-w-[70%]
-      transition-colors duration-300 group-hover:text-green-600
-      text-[clamp(1.1rem,1.5vw,1.5rem)]"
+          transition-colors duration-300 group-hover:text-green-600
+          text-[clamp(1.1rem,1.5vw,1.5rem)]"
         >
           {title}
         </h3>
 
-        <div className="text-3xl transition-all duration-300 group-hover:-translate-y-1 scale-90 sm:scale-100">
-          {icon || "🧪"}
+        {/* IMAGE (Sanity) OR fallback emoji */}
+        <div className="relative w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center">
+          {icon ? (
+            <img
+              src={icon}
+              alt={title}
+              className="object-contain h-20 w-20 transition-all duration-300 
+              group-hover:-translate-y-1 group-hover:scale-110"
+            />
+          ) : (
+            <span className="text-3xl">{icon || "🧪"}</span>
+          )}
         </div>
       </div>
 
       {/* Description */}
-      <p
-        className="mb-4 text-gray-500 leading-relaxed
-    text-[clamp(0.85rem,1.2vw,1.1rem)]"
-      >
+      <p className="mb-4 text-gray-500 leading-relaxed text-[clamp(0.85rem,1.2vw,1.1rem)]">
         {description}
       </p>
 
@@ -101,8 +112,7 @@ const TestimonialCard = ({
         {points.map((point, idx) => (
           <li
             key={idx}
-            className="flex items-start gap-2 text-gray-700
-        text-[clamp(0.8rem,1.1vw,1rem)]"
+            className="flex items-start gap-2 text-gray-700 text-[clamp(0.8rem,1.1vw,1rem)]"
           >
             <CheckCircle className="text-green-500 w-4 h-4 mt-1 shrink-0" />
             {point}
@@ -116,11 +126,11 @@ const TestimonialCard = ({
       {/* Button */}
       <button
         className="w-fit mx-auto sm:mx-0
-    bg-green-600 text-white
-    px-5 sm:px-6 md:px-8 py-2
-    rounded-lg flex items-center gap-2
-    hover:bg-green-500 transition
-    text-[clamp(0.85rem,1vw,1rem)]"
+        bg-green-600 text-white
+        px-5 sm:px-6 md:px-8 py-2
+        rounded-lg flex items-center gap-2
+        hover:bg-green-500 transition
+        text-[clamp(0.85rem,1vw,1rem)]"
       >
         Explore More
       </button>
@@ -128,32 +138,33 @@ const TestimonialCard = ({
   );
 };
 
+// ─── Section Component ─────────────────────────────────────
+
 type TestimonialProps = {
   data?: TestimonialSection | null;
 };
 
 const TestimonialSectionComponent = ({ data }: TestimonialProps) => {
   const label = data?.label || "Find the Right Test for Your Needs!";
-  const heading = data?.heading || "Providing the Diverse Needs of Your Patient Community";
+  const heading =
+    data?.heading || "Providing the Diverse Needs of Your Patient Community";
+
   const items = data?.items?.length ? data.items : fallbackItems;
 
   return (
     <section className="bg-white py-16 px-6 md:px-12 lg:px-20">
-      {/* Top Tagline */}
+      {/* Heading */}
       <div className="text-center px-4 sm:px-6 md:px-0">
-        <p
-          className="text-green-600 font-medium mb-2 sm:mb-3
-    text-[clamp(0.75rem,1vw,0.95rem)]"
-        >
+        <p className="text-green-600 font-medium mb-2 sm:mb-3 text-[clamp(0.75rem,1vw,0.95rem)]">
           {label}
         </p>
 
         <h2
           className="font-bold text-blue-900 mx-auto
-    max-w-[90%] sm:max-w-2xl md:max-w-3xl
-    leading-[1.2] sm:leading-tight
-    mb-8 sm:mb-10 md:mb-12
-    text-[clamp(1.5rem,3vw,2.5rem)]"
+          max-w-[90%] sm:max-w-2xl md:max-w-3xl
+          leading-[1.2] sm:leading-tight
+          mb-8 sm:mb-10 md:mb-12
+          text-[clamp(1.5rem,3vw,2.5rem)]"
         >
           {heading}
         </h2>
