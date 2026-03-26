@@ -52,6 +52,12 @@ const aboutSection = defineArrayMember({
       type: "number",
       initialValue: 20,
     }),
+    defineField({
+      name: "image",
+      title: "Hexagon Image",
+      type: "image",
+      options: { hotspot: true },
+    }),
   ],
   preview: {
     select: { title: "heading" },

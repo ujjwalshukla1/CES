@@ -116,6 +116,9 @@ export type AboutSection = {
   features?: AboutFeature[];
   ctaText?: string;
   yearsExperience?: number;
+  image?: {
+    asset: { _ref: string };
+  };
 };
 
 export type ServiceItem = {
@@ -154,7 +157,8 @@ export const pageQuery = `*[_type == "page" && slug.current == $slug][0]{
       description,
       features[]{ _key, text },
       ctaText,
-      yearsExperience
+      yearsExperience,
+      image
     },
     _type == "servicesSection" => {
       label,

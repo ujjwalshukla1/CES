@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import FloatingHex from "../ui/FloatingHex";
 import type { AboutSection } from "@/lib/sanity/queries";
+import { urlFor } from "@/lib/sanity/image";
 
 const css = `
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap');
@@ -94,6 +95,7 @@ const fallback = {
   ],
   ctaText: "Get in Touch",
   yearsExperience: 20,
+  image: undefined as AboutSection["image"],
 };
 
 type AboutProps = {
@@ -149,7 +151,19 @@ export default function About({ data }: AboutProps) {
               <FloatingHex size={80} color="#2db87a" />
             </div>
 
-            <div className="doctor-wrap hex-clip bg-green-200" />
+            <div className="doctor-wrap hex-clip">
+              {d.image?.asset ? (
+                <img
+                  src={urlFor(d.image).width(640).height(780).url()}
+                  alt={d.heading || "About"}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              ) : null}
+            </div>
 
             <div className="float exp-card-wrap z-50">
               <div className="exp-card bg-white p-4 rounded-xl shadow text-center">
