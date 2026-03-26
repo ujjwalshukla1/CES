@@ -167,7 +167,45 @@ export type HeroSection = {
   clientLogos?: ClientLogo[];
 };
 
-export type Section = AboutSection | ServicesSection | HeroSection;
+export type ContactFeature = {
+  _key: string;
+  title: string;
+  description: string;
+};
+
+export type ContactSection = {
+  _key: string;
+  _type: "contactSection";
+  badge?: string;
+  heading?: string;
+  buttonText?: string;
+  serviceOptions?: string[];
+  locationOptions?: string[];
+  timeOptions?: string[];
+  specialHoursLabels?: { _key: string; label: string }[];
+  infoText?: string;
+  features?: ContactFeature[];
+  image?: { asset: { _ref: string } };
+  imageUrl?: string;
+};
+
+export type TestimonialItem = {
+  _key: string;
+  title: string;
+  description: string;
+  points: string[];
+  icon?: string;
+};
+
+export type TestimonialSection = {
+  _key: string;
+  _type: "testimonialSection";
+  label?: string;
+  heading?: string;
+  items?: TestimonialItem[];
+};
+
+export type Section = AboutSection | ServicesSection | HeroSection | ContactSection | TestimonialSection;
 
 export type PageData = {
   title: string;
@@ -200,6 +238,24 @@ export const pageQuery = `*[_type == "page" && slug.current == $slug][0]{
       label,
       heading,
       services[]{ _key, title, description, icon, href }
+    },
+    _type == "testimonialSection" => {
+      label,
+      heading,
+      items[]{ _key, title, description, points, icon }
+    },
+    _type == "contactSection" => {
+      badge,
+      heading,
+      buttonText,
+      serviceOptions,
+      locationOptions,
+      timeOptions,
+      specialHoursLabels[]{ _key, label },
+      infoText,
+      features[]{ _key, title, description },
+      image,
+      imageUrl
     }
   }
 }`;

@@ -1,17 +1,12 @@
 // components/TestimonialSection.tsx
 
-import React from "react";
+// Testimonial Section
 import { CheckCircle } from "lucide-react";
+import type { TestimonialSection, TestimonialItem } from "@/lib/sanity/queries";
 
-type TestimonialItem = {
-  title: string;
-  description: string;
-  points: string[];
-  icon: React.ReactNode;
-};
-
-const Testimonials: TestimonialItem[] = [
+const fallbackItems: TestimonialItem[] = [
   {
+    _key: "1",
     title: "Food Sensitivity Testing",
     description:
       "IgG food reactions can take hours or days to develop, making it difficult to determine which food is responsible...",
@@ -20,9 +15,10 @@ const Testimonials: TestimonialItem[] = [
       "Gastrointestinal distress",
       "Bloating / Indigestion",
     ],
-    icon: <div className="text-blue-600 text-3xl">🍲</div>,
+    icon: "🍲",
   },
   {
+    _key: "2",
     title: "Genova Diagnostics Testing",
     description:
       "Genova Diagnostics is an internationally renowned lab committed to only the highest standards...",
@@ -31,9 +27,10 @@ const Testimonials: TestimonialItem[] = [
       "Nutritional / Endocrinology",
       "Genomics / Environmental",
     ],
-    icon: <div className="text-blue-600 text-3xl">🧬</div>,
+    icon: "🧬",
   },
   {
+    _key: "3",
     title: "Hormone Insights Testing",
     description:
       "Hormones are essential for the body to function optimally. Imbalances may result in many health conditions...",
@@ -42,21 +39,21 @@ const Testimonials: TestimonialItem[] = [
       "Androgens and 17-ketosteroids",
       "Progesterone metabolites",
     ],
-    icon: <div className="text-blue-600 text-3xl">⚛️</div>,
+    icon: "⚛️",
   },
 ];
 
-const TestimonialCard: React.FC<TestimonialItem> = ({
+const TestimonialCard = ({
   title,
   description,
   points,
   icon,
-}) => {
+}: TestimonialItem) => {
   return (
     <div
-      className="group relative bg-white rounded-2xl shadow-md 
-  p-5 sm:p-6 md:p-8 
-  flex flex-col justify-between 
+      className="group relative bg-white rounded-2xl shadow-md border border-gray-100
+  p-5 sm:p-6 md:p-8
+  flex flex-col justify-between
   transition-all duration-300 hover:shadow-lg"
     >
       {/* Top Pills (Animated) */}
@@ -79,15 +76,15 @@ const TestimonialCard: React.FC<TestimonialItem> = ({
       {/* Header */}
       <div className="flex justify-between items-start mb-3 sm:mb-4">
         <h3
-          className="font-bold text-blue-900 max-w-[70%] 
+          className="font-bold text-blue-900 max-w-[70%]
       transition-colors duration-300 group-hover:text-green-600
       text-[clamp(1.1rem,1.5vw,1.5rem)]"
         >
           {title}
         </h3>
 
-        <div className="transition-all duration-300 group-hover:-translate-y-1 scale-90 sm:scale-100">
-          {icon}
+        <div className="text-3xl transition-all duration-300 group-hover:-translate-y-1 scale-90 sm:scale-100">
+          {icon || "🧪"}
         </div>
       </div>
 
@@ -114,15 +111,15 @@ const TestimonialCard: React.FC<TestimonialItem> = ({
       </ul>
 
       {/* Divider */}
-      <div className="border-t mb-4 group-hover:border-gray-300 transition" />
+      <div className="border-t border-gray-200 mb-4 group-hover:border-gray-300 transition" />
 
       {/* Button */}
       <button
-        className="w-fit mx-auto sm:mx-0 
-    bg-blue-900 text-white 
-    px-5 sm:px-6 md:px-8 py-2 
-    rounded-lg flex items-center gap-2 
-    hover:bg-blue-800 transition
+        className="w-fit mx-auto sm:mx-0
+    bg-green-600 text-white
+    px-5 sm:px-6 md:px-8 py-2
+    rounded-lg flex items-center gap-2
+    hover:bg-green-500 transition
     text-[clamp(0.85rem,1vw,1rem)]"
       >
         Explore More
@@ -131,20 +128,26 @@ const TestimonialCard: React.FC<TestimonialItem> = ({
   );
 };
 
-const TestimonialSection: React.FC = () => {
+type TestimonialProps = {
+  data?: TestimonialSection | null;
+};
+
+const TestimonialSectionComponent = ({ data }: TestimonialProps) => {
+  const label = data?.label || "Find the Right Test for Your Needs!";
+  const heading = data?.heading || "Providing the Diverse Needs of Your Patient Community";
+  const items = data?.items?.length ? data.items : fallbackItems;
+
   return (
-    <section className="bg-gray-50 py-16 px-6 md:px-12 lg:px-20">
+    <section className="bg-white py-16 px-6 md:px-12 lg:px-20">
       {/* Top Tagline */}
       <div className="text-center px-4 sm:px-6 md:px-0">
-        {/* Subheading */}
         <p
           className="text-green-600 font-medium mb-2 sm:mb-3
     text-[clamp(0.75rem,1vw,0.95rem)]"
         >
-          Find the Right Test for Your Needs!
+          {label}
         </p>
 
-        {/* Heading */}
         <h2
           className="font-bold text-blue-900 mx-auto
     max-w-[90%] sm:max-w-2xl md:max-w-3xl
@@ -152,14 +155,14 @@ const TestimonialSection: React.FC = () => {
     mb-8 sm:mb-10 md:mb-12
     text-[clamp(1.5rem,3vw,2.5rem)]"
         >
-          Providing the Diverse Needs of Your Patient Community
+          {heading}
         </h2>
       </div>
 
       {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {Testimonials.map((Testimonial, idx) => (
-          <TestimonialCard key={idx} {...Testimonial} />
+        {items.map((item) => (
+          <TestimonialCard key={item._key} {...item} />
         ))}
       </div>
 
@@ -172,4 +175,4 @@ const TestimonialSection: React.FC = () => {
   );
 };
 
-export default TestimonialSection;
+export default TestimonialSectionComponent;

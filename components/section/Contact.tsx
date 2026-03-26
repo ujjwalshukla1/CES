@@ -9,6 +9,8 @@ import {
   CheckCircle2,
   Loader2,
 } from "lucide-react";
+import type { ContactSection } from "@/lib/sanity/queries";
+import { urlFor } from "@/lib/sanity/image";
 
 // ─── Animation hook ───────────────────────────────────────────────────────────
 
@@ -84,11 +86,11 @@ function SelectField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="w-full appearance-none bg-white/10 border border-white/20 text-white rounded-lg px-4 py-3 pr-10 text-sm
-            focus:outline-none focus:border-cyan-400/60 focus:bg-white/15 focus:shadow-[0_0_0_3px_rgba(34,211,238,0.15)]
+            focus:outline-none focus:border-green-400/60 focus:bg-white/15 focus:shadow-[0_0_0_3px_rgba(45,184,122,0.15)]
             hover:border-white/40 hover:bg-white/13 transition-all duration-200 cursor-pointer"
         >
           {options.map((o) => (
-            <option key={o} value={o} className="bg-[#0a2d7a] text-white">
+            <option key={o} value={o} className="bg-slate-900 text-white">
               {o}
             </option>
           ))}
@@ -136,7 +138,7 @@ function InputField({
     >
       <label className="text-sm font-semibold text-white/90">
         {label}
-        {required && <span className="text-cyan-300 ml-1">(required)</span>}
+        {required && <span className="text-green-300 ml-1">(required)</span>}
       </label>
       <div className="relative">
         {icon && (
@@ -144,7 +146,7 @@ function InputField({
             className="absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200"
             style={{
               color: focused
-                ? "rgba(34,211,238,0.85)"
+                ? "rgba(45,184,122,0.85)"
                 : "rgba(255,255,255,0.45)",
             }}
           >
@@ -159,7 +161,7 @@ function InputField({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           className={`w-full bg-white/10 border border-white/20 text-white placeholder-white/40 rounded-lg py-3 text-sm
-            focus:outline-none focus:border-cyan-400/60 focus:bg-white/15 focus:shadow-[0_0_0_3px_rgba(34,211,238,0.15)]
+            focus:outline-none focus:border-green-400/60 focus:bg-white/15 focus:shadow-[0_0_0_3px_rgba(45,184,122,0.15)]
             hover:border-white/40 hover:bg-white/13 transition-all duration-200 ${icon ? "pl-9 pr-4" : "px-4"}`}
         />
       </div>
@@ -192,14 +194,14 @@ function CheckboxItem({
       <div
         className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-all duration-200 ${
           checked
-            ? "bg-cyan-400 border-cyan-400 scale-110"
-            : "border-white/40 bg-white/10 group-hover:border-cyan-300/60 group-hover:bg-white/15"
+            ? "bg-green-500 border-green-500 scale-110"
+            : "border-white/40 bg-white/10 group-hover:border-green-400/60 group-hover:bg-white/15"
         }`}
         onClick={() => onChange(!checked)}
       >
         {checked && (
           <svg
-            className="w-2.5 h-2.5 text-[#0a2d7a]"
+            className="w-2.5 h-2.5 text-gray-900"
             fill="none"
             viewBox="0 0 10 10"
             style={{
@@ -226,15 +228,52 @@ function CheckboxItem({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function LabAppointment() {
+const defaultServices = ["Genetic Tests", "Blood Tests", "Urine Tests", "COVID-19 PCR", "Allergy Tests", "Hormone Tests"];
+const defaultLocations = ["California", "New York", "Texas", "Florida", "Illinois", "Washington"];
+const defaultTimes = ["Select Time", "8:00 AM", "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
+const defaultSpecialLabels = [
+  { _key: "1", label: "Open before 8:00 am" },
+  { _key: "2", label: "Wheelchair Accessible" },
+  { _key: "3", label: "Open Saturdays" },
+  { _key: "4", label: "Serving Customers with Autism" },
+  { _key: "5", label: "24 Hour Holter Monitoring" },
+];
+const defaultFeatures = [
+  { _key: "1", title: "Patient Centered Care", description: "We work day and night to solve the problems that can help them move forward for those who is seeking answers!" },
+];
+
+function getImgSrc(image?: { asset: { _ref: string } }, imageUrl?: string): string | null {
+  if (image?.asset) return urlFor(image).width(800).height(600).url();
+  return imageUrl || null;
+}
+
+type ContactProps = {
+  data?: ContactSection | null;
+};
+
+export default function LabAppointment({ data }: ContactProps) {
+  const d = data;
   const { ref, inView } = useInView(0.08);
   const [submitState, setSubmitState] = useState<
     "idle" | "loading" | "success"
   >("idle");
 
+  const services = d?.serviceOptions?.length ? d.serviceOptions : defaultServices;
+  const locations = d?.locationOptions?.length ? d.locationOptions : defaultLocations;
+  const times = d?.timeOptions?.length ? d.timeOptions : defaultTimes;
+  const specialLabels = d?.specialHoursLabels?.length ? d.specialHoursLabels : defaultSpecialLabels;
+  const badge = d?.badge || "Your Health And Safety Is Important To Us";
+  const heading = d?.heading || "Find Your Nearest Lab And Schedule An Appointment";
+  const buttonText = d?.buttonText || "Make An Appointment";
+  const infoText = d?.infoText || "To provide a comfortable and safe environment for our patients and employees, please avoid wearing scented perfumes or creams when visiting our Patient Service Centres.";
+  const features = d?.features?.length ? d.features : defaultFeatures;
+  const panelImg = getImgSrc(d?.image, d?.imageUrl);
+
+  const [checkedSpecials, setCheckedSpecials] = useState<Record<string, boolean>>({});
+
   const [form, setForm] = useState<FormState>({
-    service: "Genetic Tests",
-    location: "California",
+    service: services[0],
+    location: locations[0],
     name: "",
     email: "",
     phone: "",
@@ -252,12 +291,6 @@ export default function LabAppointment() {
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
-  const setSpecial = (key: keyof FormState["specialHours"], val: boolean) =>
-    setForm((prev) => ({
-      ...prev,
-      specialHours: { ...prev.specialHours, [key]: val },
-    }));
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitState("loading");
@@ -265,36 +298,6 @@ export default function LabAppointment() {
     setSubmitState("success");
     setTimeout(() => setSubmitState("idle"), 3500);
   };
-
-  const services = [
-    "Genetic Tests",
-    "Blood Tests",
-    "Urine Tests",
-    "COVID-19 PCR",
-    "Allergy Tests",
-    "Hormone Tests",
-  ];
-  const locations = [
-    "California",
-    "New York",
-    "Texas",
-    "Florida",
-    "Illinois",
-    "Washington",
-  ];
-  const times = [
-    "Select Time",
-    "8:00 AM",
-    "9:00 AM",
-    "10:00 AM",
-    "11:00 AM",
-    "12:00 PM",
-    "1:00 PM",
-    "2:00 PM",
-    "3:00 PM",
-    "4:00 PM",
-    "5:00 PM",
-  ];
 
   return (
     <>
@@ -329,9 +332,9 @@ export default function LabAppointment() {
           100%{ transform: scale(1);   opacity: 1; }
         }
         @keyframes pulseRing {
-          0%  { box-shadow: 0 0 0 0   rgba(34,211,238,0.5); }
-          70% { box-shadow: 0 0 0 10px rgba(34,211,238,0); }
-          100%{ box-shadow: 0 0 0 0   rgba(34,211,238,0); }
+          0%  { box-shadow: 0 0 0 0   rgba(45,184,122,0.5); }
+          70% { box-shadow: 0 0 0 10px rgba(45,184,122,0); }
+          100%{ box-shadow: 0 0 0 0   rgba(45,184,122,0); }
         }
         @keyframes floatIcon {
           0%, 100% { transform: translateY(0px); }
@@ -351,7 +354,7 @@ export default function LabAppointment() {
         .spin         { animation: spin 0.8s linear infinite; }
 
         .shimmer-word {
-          background: linear-gradient(90deg, #ffffff 0%, #67e8f9 40%, #ffffff 60%, #a5f3fc 100%);
+          background: linear-gradient(90deg, #ffffff 0%, #4ade80 40%, #ffffff 60%, #86efac 100%);
           background-size: 250% auto;
           -webkit-background-clip: text;
           background-clip: text;
@@ -371,22 +374,22 @@ export default function LabAppointment() {
               className={`flex-1 p-6 sm:p-10 ${inView ? "left-anim" : "opacity-0"}`}
               style={{
                 background:
-                  "linear-gradient(135deg, rgba(10,45,122,0.97) 0%, rgba(8,55,140,0.93) 100%)",
+                  "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
               }}
             >
               <p
-                className={`text-cyan-400 text-sm font-semibold tracking-wide mb-2 ${inView ? "badge-anim" : "opacity-0"}`}
+                className={`text-green-400 text-sm font-semibold tracking-wide mb-2 ${inView ? "badge-anim" : "opacity-0"}`}
               >
-                Your Health And Safety Is Important To Us
+                {badge}
               </p>
 
               <h2
                 className={`text-2xl sm:text-3xl font-bold leading-snug mb-8 ${inView ? "title-anim" : "opacity-0"}`}
               >
-                <span className="text-white">Find Your Nearest Lab And</span>
+                <span className="text-white">{heading.split(" ").slice(0, Math.ceil(heading.split(" ").length / 2)).join(" ")}</span>
                 <br />
                 <span className={inView ? "shimmer-word" : "text-white"}>
-                  Schedule An Appointment
+                  {heading.split(" ").slice(Math.ceil(heading.split(" ").length / 2)).join(" ")}
                 </span>
               </h2>
 
@@ -467,22 +470,22 @@ export default function LabAppointment() {
                     }}
                   >
                     <label className="text-sm font-semibold text-white/90">
-                      Time <span className="text-cyan-300">(required)</span>
+                      Time <span className="text-green-300">(required)</span>
                     </label>
                     <div className="relative group">
                       <Clock
                         size={14}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-white/50 transition-colors duration-200 group-focus-within:text-cyan-400/80"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-white/50 transition-colors duration-200 group-focus-within:text-green-400/80"
                       />
                       <select
                         value={form.time}
                         onChange={(e) => setField("time", e.target.value)}
                         className="w-full appearance-none bg-white/10 border border-white/20 text-white rounded-lg pl-9 pr-8 py-3 text-sm
-                          focus:outline-none focus:border-cyan-400/60 focus:bg-white/15 focus:shadow-[0_0_0_3px_rgba(34,211,238,0.15)]
+                          focus:outline-none focus:border-green-400/60 focus:bg-white/15 focus:shadow-[0_0_0_3px_rgba(45,184,122,0.15)]
                           hover:border-white/40 hover:bg-white/13 transition-all duration-200 cursor-pointer"
                       >
                         {times.map((t) => (
-                          <option key={t} value={t} className="bg-[#0a2d7a]">
+                          <option key={t} value={t} className="bg-slate-900">
                             {t}
                           </option>
                         ))}
@@ -505,44 +508,19 @@ export default function LabAppointment() {
                   }}
                 >
                   <p className="text-sm font-semibold text-white/90 mb-3">
-                    Special Hours and Access
+                    Services you want to use (optional)
                   </p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-3">
-                    <CheckboxItem
-                      label="Open before 8:00 am"
-                      checked={form.specialHours.beforeEight}
-                      onChange={(v) => setSpecial("beforeEight", v)}
-                      delay={930}
-                      inView={inView}
-                    />
-                    <CheckboxItem
-                      label="Wheelchair Accessible"
-                      checked={form.specialHours.wheelchair}
-                      onChange={(v) => setSpecial("wheelchair", v)}
-                      delay={970}
-                      inView={inView}
-                    />
-                    <CheckboxItem
-                      label="Open Saturdays"
-                      checked={form.specialHours.openSaturday}
-                      onChange={(v) => setSpecial("openSaturday", v)}
-                      delay={1010}
-                      inView={inView}
-                    />
-                    <CheckboxItem
-                      label="Serving Customers with Autism"
-                      checked={form.specialHours.autism}
-                      onChange={(v) => setSpecial("autism", v)}
-                      delay={1050}
-                      inView={inView}
-                    />
-                    <CheckboxItem
-                      label="24 Hour Holter Monitoring"
-                      checked={form.specialHours.holter}
-                      onChange={(v) => setSpecial("holter", v)}
-                      delay={1090}
-                      inView={inView}
-                    />
+                    {specialLabels.map((item, i) => (
+                      <CheckboxItem
+                        key={item._key}
+                        label={item.label}
+                        checked={!!checkedSpecials[item._key]}
+                        onChange={(v) => setCheckedSpecials((prev) => ({ ...prev, [item._key]: v }))}
+                        delay={930 + i * 40}
+                        inView={inView}
+                      />
+                    ))}
                   </div>
                 </div>
 
@@ -571,7 +549,7 @@ export default function LabAppointment() {
                       submitState !== "success"
                         ? {
                             background:
-                              "linear-gradient(135deg, #00b4d8 0%, #0077b6 100%)",
+                              "linear-gradient(135deg, #2db87a 0%, #16a34a 100%)",
                           }
                         : {}
                     }
@@ -588,7 +566,7 @@ export default function LabAppointment() {
                     />
 
                     <span className="relative flex items-center justify-center gap-2">
-                      {submitState === "idle" && "Make An Appointment"}
+                      {submitState === "idle" && buttonText}
                       {submitState === "loading" && (
                         <>
                           <Loader2 size={16} className="spin" />
@@ -618,19 +596,25 @@ export default function LabAppointment() {
               className={`lg:w-105 xl:w-120 flex flex-col ${inView ? "right-anim" : "opacity-0"}`}
               style={{
                 background:
-                  "linear-gradient(160deg, #0d3ea8 0%, #0a47b5 60%, #0b55c4 100%)",
+                  "linear-gradient(160deg, #1b3a7a 0%, #1e3a5f 60%, #0f172a 100%)",
               }}
             >
               {/* Image with zoom-out reveal */}
               <div className="relative w-full h-56 sm:h-72 lg:h-80 overflow-hidden">
-                <div
-                  className={`w-full h-full bg-blue-900/50 ${inView ? "img-anim" : ""}`}
-                />
+                {panelImg ? (
+                  <img
+                    src={panelImg}
+                    alt=""
+                    className={`w-full h-full object-cover ${inView ? "img-anim" : ""}`}
+                  />
+                ) : (
+                  <div className={`w-full h-full bg-blue-900/50 ${inView ? "img-anim" : ""}`} />
+                )}
                 <div
                   className="absolute inset-0"
                   style={{
                     background:
-                      "linear-gradient(to bottom, transparent 55%, rgba(10,45,140,0.6) 100%)",
+                      "linear-gradient(to bottom, transparent 55%, rgba(15,23,42,0.6) 100%)",
                   }}
                 />
               </div>
@@ -640,30 +624,28 @@ export default function LabAppointment() {
                 className={`flex-1 p-6 sm:p-8 space-y-6 ${inView ? "info-anim" : "opacity-0"}`}
               >
                 <p className="text-white/75 text-sm leading-relaxed">
-                  To provide a comfortable and safe environment for our patients
-                  and employees, please avoid wearing scented perfumes or creams
-                  when visiting our Patient Service Centres.
+                  {infoText}
                 </p>
 
-                {/* Feature card */}
-                <div className="flex items-start gap-4 p-4 rounded-xl transition-all duration-300 hover:bg-white/6 cursor-default group">
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 float-icon
-                      transition-shadow duration-300 group-hover:shadow-[0_0_22px_rgba(34,211,238,0.35)]"
-                    style={{ background: "rgba(255,255,255,0.12)" }}
-                  >
-                    <Pill size={22} className="text-cyan-300" />
+                {features.map((feat) => (
+                  <div key={feat._key} className="flex items-start gap-4 p-4 rounded-xl transition-all duration-300 hover:bg-white/6 cursor-default group">
+                    <div
+                      className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 float-icon
+                        transition-shadow duration-300 group-hover:shadow-[0_0_22px_rgba(45,184,122,0.35)]"
+                      style={{ background: "rgba(255,255,255,0.12)" }}
+                    >
+                      <Pill size={22} className="text-green-300" />
+                    </div>
+                    <div>
+                      <h4 className="text-white font-bold text-base mb-1 transition-colors duration-200 group-hover:text-green-300">
+                        {feat.title}
+                      </h4>
+                      <p className="text-white/65 text-sm leading-relaxed">
+                        {feat.description}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-white font-bold text-base mb-1 transition-colors duration-200 group-hover:text-cyan-200">
-                      Patient Centered Care
-                    </h4>
-                    <p className="text-white/65 text-sm leading-relaxed">
-                      We work day and night to solve the problems that can help
-                      them move forward for those who is seeking answers!
-                    </p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>

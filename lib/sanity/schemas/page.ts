@@ -245,6 +245,182 @@ const servicesSection = defineArrayMember({
   },
 });
 
+// --- Section: Testimonial ---
+const testimonialSection = defineArrayMember({
+  name: "testimonialSection",
+  title: "Testimonial / Testing Section",
+  type: "object",
+  fields: [
+    defineField({
+      name: "label",
+      title: "Label",
+      type: "string",
+      initialValue: "Find the Right Test for Your Needs!",
+    }),
+    defineField({
+      name: "heading",
+      title: "Heading",
+      type: "string",
+      initialValue: "Providing the Diverse Needs of Your Patient Community",
+    }),
+    defineField({
+      name: "items",
+      title: "Cards",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            defineField({
+              name: "title",
+              title: "Title",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "description",
+              title: "Description",
+              type: "text",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "points",
+              title: "Bullet Points",
+              type: "array",
+              of: [defineArrayMember({ type: "string" })],
+            }),
+            defineField({
+              name: "icon",
+              title: "Icon Emoji",
+              type: "string",
+              description: "e.g. 🍲 🧬 ⚛️",
+            }),
+          ],
+          preview: {
+            select: { title: "title", subtitle: "icon" },
+          },
+        }),
+      ],
+    }),
+  ],
+  preview: {
+    select: { title: "heading" },
+    prepare({ title }) {
+      return { title: title || "Testimonial Section", subtitle: "Testimonial" };
+    },
+  },
+});
+
+// --- Section: Contact ---
+const contactSection = defineArrayMember({
+  name: "contactSection",
+  title: "Contact / Appointment Section",
+  type: "object",
+  fields: [
+    defineField({
+      name: "badge",
+      title: "Badge Text",
+      type: "string",
+      initialValue: "Your Health And Safety Is Important To Us",
+    }),
+    defineField({
+      name: "heading",
+      title: "Heading",
+      type: "string",
+      initialValue: "Find Your Nearest Lab And Schedule An Appointment",
+    }),
+    defineField({
+      name: "buttonText",
+      title: "Submit Button Text",
+      type: "string",
+      initialValue: "Make An Appointment",
+    }),
+    defineField({
+      name: "serviceOptions",
+      title: "Service Options",
+      type: "array",
+      of: [defineArrayMember({ type: "string" })],
+    }),
+    defineField({
+      name: "locationOptions",
+      title: "Location Options",
+      type: "array",
+      of: [defineArrayMember({ type: "string" })],
+    }),
+    defineField({
+      name: "timeOptions",
+      title: "Time Options",
+      type: "array",
+      of: [defineArrayMember({ type: "string" })],
+    }),
+    defineField({
+      name: "specialHoursLabels",
+      title: "Services you want",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            defineField({
+              name: "label",
+              title: "Label",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+          ],
+        }),
+      ],
+    }),
+    defineField({
+      name: "infoText",
+      title: "Info Panel Text",
+      type: "text",
+    }),
+    defineField({
+      name: "features",
+      title: "Feature Cards",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            defineField({
+              name: "title",
+              title: "Title",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "description",
+              title: "Description",
+              type: "text",
+              validation: (rule) => rule.required(),
+            }),
+          ],
+        }),
+      ],
+    }),
+    defineField({
+      name: "image",
+      title: "Upload Image",
+      type: "image",
+      options: { hotspot: true },
+      description: "Upload an image or use the URL field below",
+    }),
+    defineField({
+      name: "imageUrl",
+      title: "Or Image URL",
+      type: "url",
+      description: "External image URL — used if no image is uploaded",
+    }),
+  ],
+  preview: {
+    prepare() {
+      return { title: "Contact Section", subtitle: "Appointment Form" };
+    },
+  },
+});
+
 // --- Page Document ---
 export default defineType({
   name: "page",
@@ -269,7 +445,7 @@ export default defineType({
       name: "sections",
       title: "Sections",
       type: "array",
-      of: [heroSection, aboutSection, servicesSection],
+      of: [heroSection, aboutSection, servicesSection, testimonialSection, contactSection],
     }),
   ],
   preview: {
