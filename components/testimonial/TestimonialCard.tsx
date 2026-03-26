@@ -15,11 +15,11 @@ export default function TestimonialCard({
       </div>
 
       <div className="flex justify-between items-start mb-3 sm:mb-4">
-        <h3 className="font-bold text-blue-900 max-w-[70%] transition-colors duration-300 group-hover:text-green-600 text-[clamp(1.1rem,1.5vw,1.5rem)]">
+        <h3 className="font-bold text-blue-900 max-w-[70%] transition-colors duration-300 group-hover:text-green-600 text-2xl lg:text-5xl">
           {title}
         </h3>
         <img
-          className="text-3xl transition-all duration-300 group-hover:-translate-y-1 w-30 h-30"
+          className="transition-all duration-300 group-hover:-translate-y-1 w-16 h-16 lg:w-30 lg:h-30"
           src={icon}
         />
       </div>
