@@ -5,11 +5,11 @@ import FooterBackground from "./footer/FooterBackground";
 import FooterColumns from "./footer/FooterColumns";
 
 const fb: FooterData = {
-  companyName: "Mistri", aboutText: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration.",
+  companyName: "CES", aboutText: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration.",
   address: "901 N Pitt Str., Suite 170 Alexandria, USA", mapUrl: "#", phone: "(406) 555-0120", email: "info@extrem.com",
   menuLinks: [{ _key: "home", label: "Home", href: "/" }, { _key: "about", label: "About Us", href: "/about" }, { _key: "services", label: "Services", href: "/services" }, { _key: "projects", label: "Our Projects", href: "/projects" }, { _key: "career", label: "Career", href: "/career" }, { _key: "team", label: "Our Team", href: "/team" }, { _key: "news", label: "Latest News", href: "/news" }, { _key: "contact", label: "Contact Us", href: "/contact" }],
   socials: [{ _key: "fb", platform: "facebook", url: "#" }, { _key: "tw", platform: "twitter", url: "#" }, { _key: "li", platform: "linkedin", url: "#" }, { _key: "ig", platform: "instagram", url: "#" }],
-  copyrightText: "Copyright Mistri. Design By GramenTheme",
+  copyrightText: "Copyright CES. Design By GramenTheme",
 };
 
 export default function Footer({ data }: { data?: FooterData | null }) {
