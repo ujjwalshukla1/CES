@@ -25,7 +25,7 @@ export default function FooterColumns({
             </svg>
             <div>
               <span className="text-gray-400">{address}</span>
-              {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="block mt-1 text-red-500 font-semibold text-sm hover:underline">View Map &#x279A;</a>}
+              {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="block mt-1 text-green-500 font-semibold text-sm hover:underline">View Map &#x279A;</a>}
             </div>
           </li>
           <li className="flex items-center gap-3">
