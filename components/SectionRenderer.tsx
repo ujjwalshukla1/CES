@@ -1,4 +1,5 @@
 import type { Section } from "@/lib/sanity/queries";
+import Hero from "./section/Hero";
 import About from "./section/About";
 import Service from "./section/Service";
 
@@ -13,6 +14,8 @@ export default function SectionRenderer({ sections }: Props) {
     <>
       {sections.map((section) => {
         switch (section._type) {
+          case "heroSection":
+            return <Hero key={section._key} data={section} />;
           case "aboutSection":
             return <About key={section._key} data={section} />;
           case "servicesSection":

@@ -119,6 +119,7 @@ export type AboutSection = {
   image?: {
     asset: { _ref: string };
   };
+  imageUrl?: string;
 };
 
 export type ServiceItem = {
@@ -137,7 +138,36 @@ export type ServicesSection = {
   services?: ServiceItem[];
 };
 
-export type Section = AboutSection | ServicesSection;
+export type HeroSlide = {
+  _key: string;
+  heading?: string;
+  description?: string;
+  ctaText?: string;
+  ctaHref?: string;
+  image?: {
+    asset: { _ref: string };
+  };
+  imageUrl?: string;
+};
+
+export type ClientLogo = {
+  _key: string;
+  name?: string;
+  image?: {
+    asset: { _ref: string };
+  };
+  imageUrl?: string;
+};
+
+export type HeroSection = {
+  _key: string;
+  _type: "heroSection";
+  slides?: HeroSlide[];
+  trustedByText?: string;
+  clientLogos?: ClientLogo[];
+};
+
+export type Section = AboutSection | ServicesSection | HeroSection;
 
 export type PageData = {
   title: string;
@@ -158,7 +188,13 @@ export const pageQuery = `*[_type == "page" && slug.current == $slug][0]{
       features[]{ _key, text },
       ctaText,
       yearsExperience,
-      image
+      image,
+      imageUrl
+    },
+    _type == "heroSection" => {
+      slides[]{ _key, heading, description, ctaText, ctaHref, image, imageUrl },
+      trustedByText,
+      clientLogos[]{ _key, name, image, imageUrl }
     },
     _type == "servicesSection" => {
       label,
