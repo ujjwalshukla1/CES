@@ -625,9 +625,11 @@ export default function LabAppointment() {
               {/* Image with zoom-out reveal */}
               <div className="relative w-full h-56 sm:h-72 lg:h-80 overflow-hidden">
                 <Image
-                  src="https://images.unsplash.com/photo-1581093806997-124204d9fa9d?w=800&q=80"
+                  src=""
                   alt="Lab technician examining a sample"
                   className={`w-full h-full object-cover object-center ${inView ? "img-anim" : ""}`}
+                  width={100}
+                  height={100}
                 />
                 <div
                   className="absolute inset-0"
