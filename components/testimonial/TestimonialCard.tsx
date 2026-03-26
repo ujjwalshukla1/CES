@@ -1,7 +1,12 @@
 import { CheckCircle } from "lucide-react";
 import type { TestimonialItem } from "@/lib/sanity/queries";
 
-export default function TestimonialCard({ title, description, points, icon }: TestimonialItem) {
+export default function TestimonialCard({
+  title,
+  description,
+  points,
+  icon,
+}: TestimonialItem) {
   return (
     <div className="group relative bg-white rounded-2xl shadow-md border border-gray-100 p-5 sm:p-6 md:p-8 flex flex-col justify-between transition-all duration-300 hover:shadow-lg">
       <div className="pointer-events-none absolute -top-3 sm:-top-4 left-4 sm:left-6 flex gap-2">
@@ -13,16 +18,22 @@ export default function TestimonialCard({ title, description, points, icon }: Te
         <h3 className="font-bold text-blue-900 max-w-[70%] transition-colors duration-300 group-hover:text-green-600 text-[clamp(1.1rem,1.5vw,1.5rem)]">
           {title}
         </h3>
-        <div className="text-3xl transition-all duration-300 group-hover:-translate-y-1 scale-90 sm:scale-100">
-          {icon || "🧪"}
-        </div>
+        <img
+          className="text-3xl transition-all duration-300 group-hover:-translate-y-1 w-30 h-30"
+          src={icon}
+        />
       </div>
 
-      <p className="mb-4 text-gray-500 leading-relaxed text-[clamp(0.85rem,1.2vw,1.1rem)]">{description}</p>
+      <p className="mb-4 text-gray-500 leading-relaxed text-[clamp(0.85rem,1.2vw,1.1rem)]">
+        {description}
+      </p>
 
       <ul className="space-y-2 mb-5 sm:mb-6">
         {points.map((point, idx) => (
-          <li key={idx} className="flex items-start gap-2 text-gray-700 text-[clamp(0.8rem,1.1vw,1rem)]">
+          <li
+            key={idx}
+            className="flex items-start gap-2 text-gray-700 text-[clamp(0.8rem,1.1vw,1rem)]"
+          >
             <CheckCircle className="text-green-500 w-4 h-4 mt-1 shrink-0" />
             {point}
           </li>
