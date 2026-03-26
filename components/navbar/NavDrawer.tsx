@@ -20,8 +20,8 @@ export default function NavDrawer({
           : "max-h-0 opacity-0 border-transparent"
       }`}
     >
-      <div className="bg-white px-8 py-6">
-        <div className="max-w-7xl mx-auto flex flex-wrap gap-x-12 gap-y-3">
+      <div className="bg-white px-4 sm:px-6 lg:px-8 py-6">
+        <div className="max-w-7xl mx-auto flex flex-wrap gap-x-8 lg:gap-x-12 gap-y-3">
           {activeLink?.dropdownLinks?.map((subLink) => (
             <Link
               key={subLink._key}

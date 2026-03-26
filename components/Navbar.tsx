@@ -6,6 +6,7 @@ import type { NavLink } from "@/lib/sanity/queries";
 import NavLinkItem from "./navbar/NavLink";
 import NavUtilIcons from "./navbar/NavUtilIcons";
 import NavDrawer from "./navbar/NavDrawer";
+import MobileMenu from "./navbar/MobileMenu";
 
 const fallbackLinks: NavLink[] = [
   { _key: "home", label: "HOME", href: "/" },
@@ -22,6 +23,7 @@ const Navbar = ({ links }: NavbarProps) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [visibleDropdown, setVisibleDropdown] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const switchingRef = useRef(false);
   const navRef = useRef<HTMLElement>(null);
 
@@ -64,36 +66,66 @@ const Navbar = ({ links }: NavbarProps) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
   const isWhite = scrolled || hovered || openDropdown !== null;
 
   return (
-    <nav
-      ref={navRef}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out ${isWhite ? "bg-white shadow-md" : "bg-transparent"}`}
-    >
-      <div className="flex items-center justify-between px-8 py-4">
-        <Link href="/" className="shrink-0">
-          <svg className={`w-12 h-12 transition-colors duration-500 ${isWhite ? "text-gray-800" : "text-white"}`} viewBox="0 0 200 200" fill="currentColor">
-            <path d="M100 10C50.3 10 10 50.3 10 100s40.3 90 90 90 90-40.3 90-90S149.7 10 100 10zm0 170c-44.1 0-80-35.9-80-80s35.9-80 80-80 80 35.9 80 80-35.9 80-80 80z" />
-            <path d="M100 45c-8 0-42 25-42 55 0 0 10-22 42-22s42 22 42 22c0-30-34-55-42-55zm0 10c5.5 0 28 17.5 32 40-8-12-20-18-32-18s-24 6-32 18c4-22.5 26.5-40 32-40z" />
-          </svg>
-        </Link>
+    <>
+      <nav
+        ref={navRef}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out ${isWhite ? "bg-white shadow-md" : "bg-transparent"}`}
+      >
+        <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 lg:py-4">
+          {/* Logo */}
+          <Link href="/" className="shrink-0">
+            <svg className={`w-10 h-10 lg:w-12 lg:h-12 transition-colors duration-500 ${isWhite ? "text-gray-800" : "text-white"}`} viewBox="0 0 200 200" fill="currentColor">
+              <path d="M100 10C50.3 10 10 50.3 10 100s40.3 90 90 90 90-40.3 90-90S149.7 10 100 10zm0 170c-44.1 0-80-35.9-80-80s35.9-80 80-80 80 35.9 80 80-35.9 80-80 80z" />
+              <path d="M100 45c-8 0-42 25-42 55 0 0 10-22 42-22s42 22 42 22c0-30-34-55-42-55zm0 10c5.5 0 28 17.5 32 40-8-12-20-18-32-18s-24 6-32 18c4-22.5 26.5-40 32-40z" />
+            </svg>
+          </Link>
 
-        <ul className="flex items-center gap-6">
-          {navLinks.map((link) => (
-            <li key={link._key}>
-              <NavLinkItem link={link} isWhite={isWhite} isOpen={openDropdown === link._key} onDropdownClick={handleDropdownClick} />
-            </li>
-          ))}
-        </ul>
+          {/* Desktop nav links — hidden on mobile */}
+          <ul className="hidden lg:flex items-center gap-6">
+            {navLinks.map((link) => (
+              <li key={link._key}>
+                <NavLinkItem link={link} isWhite={isWhite} isOpen={openDropdown === link._key} onDropdownClick={handleDropdownClick} />
+              </li>
+            ))}
+          </ul>
 
-        <NavUtilIcons isWhite={isWhite} />
-      </div>
+          {/* Desktop utility icons — hidden on mobile */}
+          <div className="hidden lg:block">
+            <NavUtilIcons isWhite={isWhite} />
+          </div>
 
-      <NavDrawer drawerOpen={drawerOpen} activeLink={activeLink} closeDropdown={closeDropdown} />
-    </nav>
+          {/* Mobile hamburger button */}
+          <button
+            onClick={() => setMobileOpen(true)}
+            className={`lg:hidden p-2 transition-colors duration-500 ${isWhite ? "text-gray-800" : "text-white"}`}
+            aria-label="Open menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Desktop dropdown drawer — hidden on mobile */}
+        <div className="hidden lg:block">
+          <NavDrawer drawerOpen={drawerOpen} activeLink={activeLink} closeDropdown={closeDropdown} />
+        </div>
+      </nav>
+
+      {/* Mobile slide-in menu */}
+      <MobileMenu isOpen={mobileOpen} onClose={() => setMobileOpen(false)} links={navLinks} />
+    </>
   );
 };
 
