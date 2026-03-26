@@ -6,7 +6,9 @@ type TestimonialProps = { data?: TestimonialSection | null };
 
 export default function TestimonialSectionComponent({ data }: TestimonialProps) {
   const label = data?.label || "Find the Right Test for Your Needs!";
-  const heading = data?.heading || "Providing the Diverse Needs of Your Patient Community";
+  const heading =
+    data?.heading || "Providing the Diverse Needs of Your Patient Community";
+
   const items = data?.items?.length ? data.items : fallbackItems;
 
   return (
