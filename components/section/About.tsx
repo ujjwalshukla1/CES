@@ -166,7 +166,7 @@ export default function About({ data }: AboutProps) {
             </div>
 
             <div className="float exp-card-wrap z-50">
-              <div className="exp-card bg-white p-4 rounded-xl shadow text-center">
+              <div className="exp-card bg-white p-4 rounded-xl shadow-lg text-center">
                 <p className="text-4xl font-bold text-green-600">{d.yearsExperience ?? fallback.yearsExperience}</p>
                 <p className="text-xs text-gray-500">Years Experience</p>
               </div>
@@ -176,13 +176,13 @@ export default function About({ data }: AboutProps) {
           {/* RIGHT */}
           <div className="flex-1 text-center md:text-left">
             <span
-              className={`anim-fade-up ${iv} sd-1 text-green-600 text-xs font-bold`}
+              className={`anim-fade-up ${iv} sd-1 text-xs font-semibold text-green-600 bg-green-100 px-4 py-1.5 rounded-full`}
             >
               {d.label || fallback.label}
             </span>
 
             <h2
-              className={`anim-fade-up ${iv} sd-2 text-3xl font-bold mt-4 text-black`}
+              className={`anim-fade-up ${iv} sd-2 text-3xl font-bold mt-4 text-gray-900`}
             >
               {d.heading || fallback.heading}
             </h2>
@@ -191,7 +191,7 @@ export default function About({ data }: AboutProps) {
               {d.description || fallback.description}
             </p>
 
-            <ul className={`anim-fade-up ${iv} sd-4 mt-6 space-y-3 text-black`}>
+            <ul className={`anim-fade-up ${iv} sd-4 mt-6 space-y-3 text-gray-800`}>
               {(d.features?.length ? d.features : fallback.features!).map((f: { _key: string; text: string }) => (
                 <li key={f._key}>✔ {f.text}</li>
               ))}
