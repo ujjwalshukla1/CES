@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   Loader2,
 } from "lucide-react";
-import Image from "next/image";
 
 // ─── Animation hook ───────────────────────────────────────────────────────────
 
@@ -624,12 +623,8 @@ export default function LabAppointment() {
             >
               {/* Image with zoom-out reveal */}
               <div className="relative w-full h-56 sm:h-72 lg:h-80 overflow-hidden">
-                <Image
-                  src=""
-                  alt="Lab technician examining a sample"
-                  className={`w-full h-full object-cover object-center ${inView ? "img-anim" : ""}`}
-                  width={100}
-                  height={100}
+                <div
+                  className={`w-full h-full bg-blue-900/50 ${inView ? "img-anim" : ""}`}
                 />
                 <div
                   className="absolute inset-0"
