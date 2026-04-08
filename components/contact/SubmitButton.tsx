@@ -1,13 +1,13 @@
 "use client";
 
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 
 export default function SubmitButton({
   submitState,
   buttonText,
   inView,
 }: {
-  submitState: "idle" | "loading" | "success";
+  submitState: "idle" | "loading" | "success" | "error";
   buttonText: string;
   inView: boolean;
 }) {
@@ -22,7 +22,7 @@ export default function SubmitButton({
     >
       <button
         type="submit"
-        disabled={submitState !== "idle"}
+        disabled={submitState === "loading"}
         className={`relative w-full sm:w-auto px-10 py-3.5 rounded-lg font-bold text-sm text-white
           overflow-hidden transition-all duration-300 disabled:cursor-not-allowed
           ${
@@ -30,14 +30,13 @@ export default function SubmitButton({
               ? "hover:brightness-115 hover:shadow-xl hover:-translate-y-0.5 hover:scale-[1.02] active:scale-[0.98] active:translate-y-0 btn-pulse"
               : submitState === "success"
                 ? "bg-emerald-500 scale-[1.02]"
-                : "opacity-80"
+                : submitState === "error"
+                  ? "bg-red-500 scale-[1.02]"
+                  : "opacity-80"
           }`}
         style={
-          submitState !== "success"
-            ? {
-                background:
-                  "linear-gradient(135deg, #2db87a 0%, #16a34a 100%)",
-              }
+          submitState === "idle"
+            ? { background: "linear-gradient(135deg, #2db87a 0%, #16a34a 100%)" }
             : {}
         }
       >
@@ -60,14 +59,14 @@ export default function SubmitButton({
           )}
           {submitState === "success" && (
             <>
-              <CheckCircle2
-                size={16}
-                style={{
-                  animation:
-                    "checkPop 0.4s cubic-bezier(0.175,0.885,0.32,1.275) both",
-                }}
-              />
+              <CheckCircle2 size={16} style={{ animation: "checkPop 0.4s cubic-bezier(0.175,0.885,0.32,1.275) both" }} />
               Appointment Booked!
+            </>
+          )}
+          {submitState === "error" && (
+            <>
+              <XCircle size={16} style={{ animation: "checkPop 0.4s cubic-bezier(0.175,0.885,0.32,1.275) both" }} />
+              Booking Failed. Try Again.
             </>
           )}
         </span>
