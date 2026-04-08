@@ -20,7 +20,7 @@ type ContactProps = { data?: ContactSection | null };
 
 export default function LabAppointment({ data: d }: ContactProps) {
   const { ref, inView } = useInView(0.08);
-  const [submitState, setSubmitState] = useState<"idle" | "loading" | "success">("idle");
+  const [submitState, setSubmitState] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [checkedSpecials, setCheckedSpecials] = useState<Record<string, boolean>>({});
 
   const services = d?.serviceOptions?.length ? d.serviceOptions : defaults.services;
@@ -35,12 +35,65 @@ export default function LabAppointment({ data: d }: ContactProps) {
   const mid = Math.ceil(headingWords.length / 2);
 
   const [form, setForm] = useState({ service: services[0], location: locations[0], name: "", email: "", phone: "", date: "", time: "" });
-  const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm((p) => ({ ...p, [k]: v }));
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => {
+    setForm((p) => ({ ...p, [k]: v }));
+    setErrors((p) => { const n = { ...p }; delete n[k]; return n; });
+  };
+
+  const validate = () => {
+    const errs: Record<string, string> = {};
+    if (!form.name.trim()) errs.name = "Name is required";
+    if(!form.email.trim()) errs.email = "Email is required";
+    if (!form.phone.trim()) errs.phone = "Phone is required";
+    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = "Invalid email";
+    return errs;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); setSubmitState("loading");
-    await new Promise((r) => setTimeout(r, 1800));
-    setSubmitState("success"); setTimeout(() => setSubmitState("idle"), 3500);
+    e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
+    setSubmitState("loading");
+    try {
+      const res = await fetch("/api/enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          service: form.service,
+          location: form.location,
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          date: form.date,
+          time: form.time,
+          tests: Object.entries(checkedSpecials)
+            .filter(([, v]) => v)
+            .map(([k]) => specialLabels.find((s) => s._key === k)?.label)
+            .filter(Boolean)
+            .join(", "),
+        }),
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        if (result.errors) {
+          const serverErrs: Record<string, string> = {};
+          result.errors.forEach((e: { field: string; message: string }) => { serverErrs[e.field] = e.message; });
+          setErrors(serverErrs);
+          setSubmitState("error");
+        } else {
+          setSubmitState("error");
+        }
+      } else {
+        setSubmitState("success");
+        setForm({ service: services[0], location: locations[0], name: "", email: "", phone: "", date: "", time: "" });
+        setCheckedSpecials({});
+      }
+    } catch {
+      setSubmitState("error");
+    }
+    setTimeout(() => setSubmitState("idle"), 3500);
   };
 
   return (
@@ -61,21 +114,22 @@ export default function LabAppointment({ data: d }: ContactProps) {
                   <SelectField label="Location" value={form.location} onChange={(v) => set("location", v)} options={locations} delay={510} inView={inView} />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <InputField label="Name" required placeholder="Name" value={form.name} onChange={(v) => set("name", v)} delay={590} inView={inView} />
-                  <InputField label="Email" placeholder="Email" type="email" value={form.email} onChange={(v) => set("email", v)} delay={650} inView={inView} />
+                  <InputField label="Name" required placeholder="Name" value={form.name} onChange={(v) => set("name", v)} delay={590} inView={inView} error={errors.name} />
+                  <InputField label="Email" required placeholder="Email" type="email" value={form.email} onChange={(v) => set("email", v)} delay={650} inView={inView} error={errors.email} />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <InputField label="Phone" required placeholder="Phone" type="tel" value={form.phone} onChange={(v) => set("phone", v)} delay={710} inView={inView} />
-                  <InputField label="Date" required placeholder="Select Date" type="date" value={form.date} onChange={(v) => set("date", v)} icon={<Calendar size={14} />} delay={770} inView={inView} />
+                  <InputField label="Phone" required placeholder="Phone" type="tel" value={form.phone} onChange={(v) => set("phone", v)} delay={710} inView={inView} error={errors.phone} />
+                  <InputField label="Date"  placeholder="Select Date" type="date" value={form.date} onChange={(v) => set("date", v)} icon={<Calendar size={14} />} delay={770} inView={inView} error={errors.date} />
                   <div className="flex flex-col gap-1.5" style={{ opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(22px)", transition: "opacity 0.65s ease 830ms, transform 0.65s cubic-bezier(0.16,1,0.3,1) 830ms" }}>
-                    <label className="text-sm font-semibold text-white/90">Time <span className="text-green-300">(required)</span></label>
+                    <label className="text-sm font-semibold text-white/90">Time</label>
                     <div className="relative group">
                       <Clock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/50 group-focus-within:text-green-400/80" />
-                      <select value={form.time} onChange={(e) => set("time", e.target.value)} className="w-full appearance-none bg-white/10 border border-white/20 text-white rounded-lg pl-9 pr-8 py-3 text-sm focus:outline-none focus:border-green-400/60 hover:border-white/40 transition-all duration-200 cursor-pointer">
+                      <select value={form.time} onChange={(e) => set("time", e.target.value)} className={`w-full appearance-none bg-white/10 border text-white rounded-lg pl-9 pr-8 py-3 text-sm focus:outline-none focus:border-green-400/60 hover:border-white/40 transition-all duration-200 cursor-pointer ${errors.time ? "border-red-500" : "border-white/20"}`}>
                         {times.map((t) => <option key={t} value={t} className="bg-slate-900">{t}</option>)}
                       </select>
                       <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 pointer-events-none group-focus-within:rotate-180 transition-transform duration-300" />
                     </div>
+                    {errors.time && <span className="text-red-400 text-xs mt-0.5">{errors.time}</span>}
                   </div>
                 </div>
                 <div style={{ opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(16px)", transition: "opacity 0.65s ease 880ms, transform 0.65s cubic-bezier(0.16,1,0.3,1) 880ms" }}>

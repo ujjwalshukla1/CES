@@ -61,6 +61,7 @@ export function InputField({
   icon,
   delay = 0,
   inView,
+  error,
 }: {
   label: string;
   required?: boolean;
@@ -71,6 +72,7 @@ export function InputField({
   icon?: React.ReactNode;
   delay?: number;
   inView: boolean;
+  error?: string;
 }) {
   const [focused, setFocused] = useState(false);
 
@@ -107,11 +109,12 @@ export function InputField({
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          className={`w-full bg-white/10 border border-white/20 text-white placeholder-white/40 rounded-lg py-3 text-sm
+          className={`w-full bg-white/10 border text-white placeholder-white/40 rounded-lg py-3 text-sm
             focus:outline-none focus:border-green-400/60 focus:bg-white/15 focus:shadow-[0_0_0_3px_rgba(45,184,122,0.15)]
-            hover:border-white/40 hover:bg-white/13 transition-all duration-200 ${icon ? "pl-9 pr-4" : "px-4"}`}
+            hover:border-white/40 hover:bg-white/13 transition-all duration-200 ${icon ? "pl-9 pr-4" : "px-4"} ${error ? "border-red-500" : "border-white/20"}`}
         />
       </div>
+      {error && <span className="text-red-400 text-xs mt-0.5">{error}</span>}
     </div>
   );
 }
