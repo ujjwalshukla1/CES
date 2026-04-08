@@ -2,6 +2,9 @@ import * as nodemailer from "nodemailer";
 import { NextRequest } from "next/server";
 import { validateEnquiry } from "./validate";
 
+// Force Node.js runtime — nodemailer doesn't work on Edge
+export const runtime = "nodejs";
+
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
@@ -12,6 +15,11 @@ export async function POST(req: NextRequest) {
     }
 
     const { service, location, name, email, phone, date, time, tests } = data;
+
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || !process.env.EMAIL_TO) {
+      console.error("Missing email env vars: EMAIL_USER, EMAIL_PASS, or EMAIL_TO");
+      return Response.json({ success: false, message: "Email configuration missing" }, { status: 500 });
+    }
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -44,7 +52,8 @@ export async function POST(req: NextRequest) {
 
     return Response.json({ success: true });
   } catch (error) {
-    console.error(error);
-    return Response.json({ success: false, message: "Internal server error" }, { status: 500 });
+    console.error("Enquiry API error:", error);
+    const message = error instanceof Error ? error.message : "Internal server error";
+    return Response.json({ success: false, message }, { status: 500 });
   }
 }
