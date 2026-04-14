@@ -2,6 +2,7 @@ import { getPage } from "@/lib/sanity/queries";
 import SectionRenderer from "@/components/SectionRenderer";
 import About from "@/components/section/About";
 import Service from "@/components/section/Service";
+import StepsGuide from "@/components/stepsGuide/StepsGuide";
 
 export default async function Home() {
   const pageData = await getPage("/");
@@ -16,6 +17,7 @@ export default async function Home() {
     <>
       <About />
       <Service />
+      <StepsGuide />
     </>
   );
 }
